@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+
+# Environment files (contain secrets)
+.env
+.env.local
+.env.*.local
+backend/.env
+
+# Large Datasets
+*.csv
+merged_sepsis_data.csv
+
+# Model files (Small enough for git)
+# *.pkl
+
+# Build outputs
+dist/
+build/
+
+# IDE
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
