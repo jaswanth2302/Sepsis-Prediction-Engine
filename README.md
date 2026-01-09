@@ -49,4 +49,16 @@ Sepsis-Prediction-Engine/
 3.  Run: `npm run dev`.
 
 ## 🔗 Architecture
+
+```text 
+[ Wearable ]
+     ↓
+[ WebSocket Stream ]
+     ↓
+[ Forward-Chaining Rules ]
+     ↓
+[ Risk State Timeline ]
+     ↓
+[ Explainable Alerts ]
+```
 See `backend/ARCHITECTURE.md` for a detailed breakdown of the Hybrid Logic engine.
