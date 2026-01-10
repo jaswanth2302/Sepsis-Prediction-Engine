@@ -1122,54 +1122,76 @@ body {
 }
 
 /* ============================================================
-   PROGRESSIVE REGISTRATION FLOW STYLES
+   PROGRESSIVE REGISTRATION FLOW STYLES (Split Layout)
    ============================================================ */
 
-.registration-flow {
+.registration-flow.split-layout {
+  display: flex;
   background: var(--color-bg-secondary);
   border: 1px solid var(--color-border);
   border-radius: var(--border-radius-lg);
-  padding: var(--spacing-lg);
-  max-width: 800px;
+  overflow: hidden;
+  max-width: 1000px;
   margin: var(--spacing-lg) auto;
+  min-height: 600px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
-.flow-header {
-  text-align: center;
-  margin-bottom: var(--spacing-lg);
-  padding-bottom: var(--spacing-md);
-  border-bottom: 1px solid var(--color-border);
+/* Sidebar */
+.flow-sidebar {
+  width: 320px;
+  background: rgba(0, 0, 0, 0.3);
+  border-right: 1px solid var(--color-border);
+  padding: var(--spacing-xl);
+  display: flex;
+  flex-direction: column;
 }
 
-.flow-header h2 {
-  font-size: 1.5rem;
-  color: var(--color-text-primary);
-  margin-bottom: var(--spacing-xs);
+.timeline-header {
+  margin-bottom: var(--spacing-xl);
 }
 
-.flow-header .patient-info {
+.timeline-header h3 {
+  color: #00d4ff;
+  font-size: 1.25rem;
+  margin: 0 0 4px 0;
+}
+
+.timeline-header p {
   color: var(--color-text-secondary);
   font-size: 0.875rem;
+  margin: 0;
 }
 
-/* Stage Progress Dots */
-.stage-progress {
+/* Vertical Timeline */
+.vertical-timeline {
   display: flex;
-  justify-content: center;
-  gap: var(--spacing-xl);
-  margin-bottom: var(--spacing-lg);
+  flex-direction: column;
+  gap: 0;
 }
 
-.stage-dot {
+.timeline-item {
+  display: flex;
+  gap: 16px;
+  position: relative;
+  padding-bottom: 32px;
+}
+
+.timeline-item:last-child {
+  padding-bottom: 0;
+  /* Use min-height to ensure spacing if needed */
+}
+
+.timeline-marker-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  position: relative;
+  width: 32px;
 }
 
-.stage-dot .stage-number {
-  width: 40px;
-  height: 40px;
+.timeline-marker {
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   background: var(--color-bg-tertiary);
   border: 2px solid var(--color-border);
@@ -1177,65 +1199,178 @@ body {
   align-items: center;
   justify-content: center;
   font-weight: 600;
-  font-size: 1rem;
   color: var(--color-text-secondary);
+  z-index: 2;
   transition: all 0.3s ease;
+  font-size: 0.9rem;
 }
 
-.stage-dot.active .stage-number {
+.timeline-line {
+  flex: 1;
+  width: 2px;
+  background: var(--color-border);
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+
+/* Active State */
+.timeline-item.active .timeline-marker {
   background: linear-gradient(135deg, #00d4ff, #0099cc);
   border-color: #00d4ff;
   color: white;
-  box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
+  box-shadow: 0 0 15px rgba(0, 212, 255, 0.4);
+  transform: scale(1.1);
 }
 
-.stage-dot.completed .stage-number {
+.timeline-item.active .stage-title {
+  color: #00d4ff;
+}
+
+.active-arrow {
+  margin-left: auto;
+  color: #00d4ff;
+  font-weight: bold;
+  opacity: 0.8;
+  animation: slide-right-pulse 1.5s infinite;
+}
+
+@keyframes slide-right-pulse {
+  0% {
+    transform: translateX(0);
+    opacity: 0.5;
+  }
+
+  50% {
+    transform: translateX(5px);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateX(0);
+    opacity: 0.5;
+  }
+}
+
+/* Completed State */
+.timeline-item.completed .timeline-marker {
   background: var(--color-stable);
   border-color: var(--color-stable);
   color: var(--color-bg-primary);
 }
 
-.stage-dot .stage-label {
-  margin-top: var(--spacing-xs);
+.timeline-item.completed .timeline-line {
+  background: var(--color-stable);
+}
+
+/* Content */
+.timeline-content {
+  flex: 1;
+  padding-top: 2px;
+}
+
+.stage-title {
+  display: block;
   font-size: 0.75rem;
-  color: var(--color-text-muted);
-  text-align: center;
-  max-width: 100px;
-}
-
-.stage-dot.active .stage-label {
-  color: var(--color-text-primary);
-}
-
-/* Stage Content */
-.stage-content {
-  background: var(--color-bg-tertiary);
-  border-radius: var(--border-radius);
-  padding: var(--spacing-lg);
-  margin-bottom: var(--spacing-lg);
-}
-
-.stage-header {
-  margin-bottom: var(--spacing-lg);
-}
-
-.stage-header h3 {
-  color: #00d4ff;
-  font-size: 1.125rem;
-  margin-bottom: var(--spacing-xs);
-}
-
-.stage-header p {
+  text-transform: uppercase;
   color: var(--color-text-secondary);
-  font-size: 0.875rem;
+  margin-bottom: 4px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
 }
 
-/* Stage Fields */
-.stage-fields {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: var(--spacing-md);
+.stage-name {
+  display: block;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: 4px;
+  font-size: 0.95rem;
+  line-height: 1.2;
+}
+
+.stage-summary {
+  font-size: 0.8rem;
+  color: var(--color-text-tertiary);
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Main Content Area */
+.flow-main {
+  flex: 1;
+  padding: var(--spacing-xl);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Reusing existing header styles broadly, but contextualizing */
+.flow-main .flow-header {
+  text-align: left;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: var(--spacing-lg);
   margin-bottom: var(--spacing-lg);
+}
+
+.flow-main .stage-instruction {
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-lg);
+  font-size: 1rem;
+}
+
+.stage-fields.grid-layout {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .registration-flow.split-layout {
+    flex-direction: column;
+    min-height: auto;
+  }
+
+  .flow-sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--color-border);
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 20px;
+    overflow-x: auto;
+  }
+
+  .vertical-timeline {
+    flex-direction: row;
+    flex: 1;
+  }
+
+  .timeline-item {
+    flex-direction: column;
+    padding-bottom: 0;
+    padding-right: 20px;
+    min-width: 120px;
+    text-align: center;
+    align-items: center;
+  }
+
+  .timeline-marker-container {
+    flex-direction: row;
+    width: auto;
+  }
+
+  .timeline-line {
+    width: 50px;
+    height: 2px;
+  }
+
+  .timeline-content {
+    text-align: center;
+  }
+
+  .active-arrow {
+    display: none;
+  }
 }
 
 .form-field {

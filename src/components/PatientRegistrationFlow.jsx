@@ -314,61 +314,86 @@ function PatientRegistrationFlow({
     const currentStageFields = stageConfig.fields;
 
     return (
-        <div className="registration-flow">
-            {/* Header */}
-            <div className="flow-header">
-                <h2>Progressive Sepsis Screening</h2>
-                {patientInfo && (
-                    <p className="patient-info">
-                        Patient: {patientInfo.name || patientInfo.id}
-                    </p>
-                )}
+        <div className="registration-flow split-layout">
+            {/* Left Sidebar: Vertical Timeline */}
+            <div className="flow-sidebar">
+                <div className="timeline-header">
+                    <h3>Sepsis Screening</h3>
+                    <p>Timeline Flow</p>
+                </div>
+
+                <div className="vertical-timeline">
+                    {[1, 2, 3].map((stage, index) => {
+                        const isActive = stage === currentStage;
+                        const isCompleted = stage < currentStage;
+                        const isNext = stage === currentStage + 1;
+
+                        return (
+                            <div key={stage} className={`timeline-item ${isActive ? 'active' : ''} ${isCompleted ? 'completed' : ''} ${isNext ? 'next' : ''}`}>
+                                <div className="timeline-marker-container">
+                                    <div className="timeline-marker">
+                                        {isCompleted ? '✓' : stage}
+                                    </div>
+                                    {/* Connectivity Line */}
+                                    {stage !== 3 && <div className="timeline-line"></div>}
+                                </div>
+
+                                <div className="timeline-content">
+                                    <span className="stage-title">Stage {stage}</span>
+                                    <span className="stage-name">{STAGES[stage].title.split(':')[1].trim()}</span>
+                                    <p className="stage-summary">{STAGES[stage].description}</p>
+                                </div>
+
+                                {/* Active Arrow Indicator */}
+                                {isActive && (
+                                    <div className="active-arrow">→</div>
+                                )}
+                            </div>
+                        );
+                    })}
+                </div>
             </div>
 
-            {/* Stage Progress */}
-            <div className="stage-progress">
-                {[1, 2, 3].map(stage => (
-                    <div
-                        key={stage}
-                        className={`stage-dot ${stage === currentStage ? 'active' : ''} ${stage < currentStage ? 'completed' : ''}`}
-                    >
-                        <span className="stage-number">{stage}</span>
-                        <span className="stage-label">{STAGES[stage].title.split(':')[1].trim()}</span>
+            {/* Right Main Content */}
+            <div className="flow-main">
+                <div className="flow-header">
+                    <h2>{stageConfig.title}</h2>
+                    {patientInfo && (
+                        <p className="patient-info">
+                            Patient: <strong>{patientInfo.name || patientInfo.id}</strong>
+                        </p>
+                    )}
+                </div>
+
+                <div className="stage-content">
+                    <p className="stage-instruction">{stageConfig.description}</p>
+
+                    {/* Input Fields */}
+                    <div className="stage-fields grid-layout">
+                        {currentStageFields.map(field => renderField(field))}
+                        {currentStage === 1 && renderField('iculos')}
                     </div>
-                ))}
-            </div>
-
-            {/* Stage Content */}
-            <div className="stage-content">
-                <div className="stage-header">
-                    <h3>{stageConfig.title}</h3>
-                    <p>{stageConfig.description}</p>
                 </div>
 
-                {/* Input Fields */}
-                <div className="stage-fields">
-                    {currentStageFields.map(field => renderField(field))}
-                    {currentStage === 1 && renderField('iculos')}
+                {/* Actions */}
+                <div className="flow-actions">
+                    <button
+                        className="btn-cancel"
+                        onClick={onCancel}
+                        disabled={isProcessing}
+                    >
+                        Cancel
+                    </button>
+
+                    <button
+                        className="btn-submit"
+                        onClick={startMonitoring}
+                        disabled={isProcessing || !currentStageFields.every(f => vitals[f])}
+                    >
+                        Start Monitoring
+                        <span className="btn-icon">▶</span>
+                    </button>
                 </div>
-            </div>
-
-            {/* Actions */}
-            <div className="flow-actions">
-                <button
-                    className="btn-cancel"
-                    onClick={onCancel}
-                    disabled={isProcessing}
-                >
-                    Cancel
-                </button>
-
-                <button
-                    className="btn-submit"
-                    onClick={startMonitoring}
-                    disabled={isProcessing || !currentStageFields.every(f => vitals[f])}
-                >
-                    Start Monitoring Phase
-                </button>
             </div>
         </div>
     );
