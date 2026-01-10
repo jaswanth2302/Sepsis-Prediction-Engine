@@ -1,5 +1,5 @@
 import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 
 /**
  * Generate a formal medical PDF report for the Sepsis Screening session.
@@ -104,7 +104,7 @@ export const generateMedicalReport = (patientInfo, stageHistory, finalAssessment
         ];
     });
 
-    doc.autoTable({
+    autoTable(doc, {
         startY: yPos + 8,
         head: [['Stage', 'Phase', 'Vitals Recorded', 'Clinical Alerts']],
         body: tableRows,
