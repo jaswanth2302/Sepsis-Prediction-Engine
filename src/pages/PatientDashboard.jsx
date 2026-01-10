@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import VitalPanel from '../components/VitalPanel.jsx';
 import RiskStatusBadge from '../components/RiskStatusBadge.jsx';
 import AlertPanel from '../components/AlertPanel.jsx';
-import ManualVitalsForm from '../components/ManualVitalsForm.jsx';
 import { vitalStream } from '../streams/VitalWebSocket.js';
 
 /**
@@ -15,7 +14,6 @@ import { vitalStream } from '../streams/VitalWebSocket.js';
 function PatientDashboard({ patient, onBack, onStatusChange }) {
     const [currentTime, setCurrentTime] = useState(new Date());
     const [patientStatus, setPatientStatus] = useState(patient?.riskStatus || 'Stable');
-    const [showVitalsForm, setShowVitalsForm] = useState(false);
 
     // Update clock every second
     useEffect(() => {
@@ -88,29 +86,6 @@ function PatientDashboard({ patient, onBack, onStatusChange }) {
                     </div>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                    <button
-                        onClick={handleRestart}
-                        style={{
-                            background: 'rgba(0, 255, 0, 0.15)',
-                            border: '1px solid rgba(0, 255, 0, 0.3)',
-                            color: '#00ff00',
-                            padding: '6px 12px',
-                            borderRadius: '4px',
-                            cursor: 'pointer',
-                            fontSize: '0.75rem',
-                            fontWeight: 600,
-                            textTransform: 'uppercase'
-                        }}
-                    >
-                        ↻ Restart Demo
-                    </button>
-                    <button
-                        onClick={() => setShowVitalsForm(true)}
-                        className="ml-analysis-btn"
-                    >
-                        <span className="btn-icon">🧬</span>
-                        ML Analysis
-                    </button>
                     <div className="current-time">
                         {formatTime()}
                     </div>
@@ -149,38 +124,6 @@ function PatientDashboard({ patient, onBack, onStatusChange }) {
 
                 <aside style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                     <AlertPanel vitalStream={vitalStream} />
-
-                    {/* Demo Info Card */}
-                    <div style={{
-                        background: '#111',
-                        borderRadius: '4px',
-                        padding: '12px',
-                        border: '1px solid #333'
-                    }}>
-                        <h4 style={{
-                            margin: '0 0 8px 0',
-                            fontSize: '0.6875rem',
-                            color: '#888',
-                            textTransform: 'uppercase',
-                            letterSpacing: '0.05em'
-                        }}>
-                            Demo Scenario
-                        </h4>
-                        <div style={{ fontSize: '0.75rem', color: '#ccc', lineHeight: 1.6 }}>
-                            <p style={{ margin: '0 0 6px 0' }}>
-                                <strong style={{ color: '#00ff00' }}>0-30s:</strong> Stable vitals
-                            </p>
-                            <p style={{ margin: '0 0 6px 0' }}>
-                                <strong style={{ color: '#ffff00' }}>30-60s:</strong> Early warning signs
-                            </p>
-                            <p style={{ margin: '0 0 6px 0' }}>
-                                <strong style={{ color: '#ff8800' }}>60-90s:</strong> Deterioration
-                            </p>
-                            <p style={{ margin: 0 }}>
-                                <strong style={{ color: '#ff4444' }}>90s+:</strong> Critical state
-                            </p>
-                        </div>
-                    </div>
                 </aside>
             </main>
 
@@ -188,13 +131,6 @@ function PatientDashboard({ patient, onBack, onStatusChange }) {
             <footer className="dashboard-footer">
                 <p>FOR CLINICAL MONITORING ONLY • NOT FOR DIAGNOSIS OR TREATMENT DECISIONS</p>
             </footer>
-
-            {/* Manual Vitals Form Modal */}
-            <ManualVitalsForm
-                isOpen={showVitalsForm}
-                onClose={() => setShowVitalsForm(false)}
-                patientId={patientInfo.id}
-            />
         </div>
     );
 }
