@@ -8,6 +8,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
 import MonitoringSession from './MonitoringSession.jsx';
+import { generateMedicalReport } from '../utils/pdfGenerator';
 
 // Clinical thresholds for alerts
 const THRESHOLDS = {
@@ -235,8 +236,15 @@ function PatientRegistrationFlow({
 
     // Handle result from MonitoringSession
     const handleMonitoringResult = ({ stage, riskResult, canProceed }) => {
-        // Save result to history
-        setStageHistory(prev => [...prev, { stage, result: riskResult }]);
+        // Create updated history locally to ensure we have the latest item
+        const updatedHistory = [...stageHistory, {
+            stage,
+            vitals: { ...vitals }, // Snapshot vitals at this stage
+            result: riskResult
+        }];
+
+        // Save result to history state
+        setStageHistory(updatedHistory);
 
         // Stop monitoring view
         setActiveMonitoring(null);
@@ -245,10 +253,13 @@ function PatientRegistrationFlow({
         if (canProceed && stage < 3) {
             setCurrentStage(prev => prev + 1);
         } else if (stage === 3) {
+            // Generate PDF Report on completion
+            generateMedicalReport(patientInfo, updatedHistory, riskResult);
+
             onComplete?.({
                 vitals,
                 riskResult,
-                stageHistory: [...stageHistory, { stage, result: riskResult }]
+                stageHistory: updatedHistory
             });
         }
     };
